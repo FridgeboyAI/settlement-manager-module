@@ -7,7 +7,7 @@ export const FEATURE_NEEDS = {
   stats: ["tileSecurity", "isSecure", "builtOn", "get"],
   buildings: ["define", "all", "get", "canAttach", "attach", "addProgress", "detach", "cancelPending", "buildDC", "builtOn"],
   resources: ["adjustResource", "setAccess"],
-  work: ["workProfile", "activityDC", "getTile", "adjustResource"],
+  work: ["workProfile", "activityDC", "getTile", "tileDCs", "adjustResource"],
   week: ["getClock", "advancePhase", "request"],
   moduleData: ["getModuleData", "registerAction", "request"]
 };

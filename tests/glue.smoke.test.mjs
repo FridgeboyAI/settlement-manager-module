@@ -148,9 +148,13 @@ test("a week of play as the host GM", async () => {
   const dSlots = core.getTile("S", "2,2").discoverables[0].slots;
   assert.equal(dSlots.length, 1); assert.equal(dSlots[0].built, "yield-2"); assert.equal(dSlots[0].pending, null);
 
-  // Record Work: a critical success doubles the yield
+  // Record Work: a critical success doubles the die and the bonus; the bonus goes to Resources
   nextRoll = 3;
-  assert.equal(await Flows.recordWork({ label: "Farm", die: "d4", degree: "criticalSuccess", bonusResources: 1, resource: "rations" }), 8);
+  assert.deepEqual(await Flows.recordWork({ label: "Pasture", die: "d6", degree: "criticalSuccess", bonusResources: 1, resource: "rations" }), { main: 6, bonus: 2 });
+  assert.equal(core.getSettlement(sid).resources.rations.amount, 6);
+  assert.equal(core.getSettlement(sid).resources.resources.amount, 2);
+  nextRoll = 5;
+  assert.deepEqual(await Flows.recordWork({ label: "Farm", die: "d6", degree: "failure", resource: "rations" }), { main: 2, bonus: 0 });
   assert.equal(core.getSettlement(sid).resources.rations.amount, 8);
 
   // Week End writes the Chronicle page

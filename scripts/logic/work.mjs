@@ -35,13 +35,25 @@ export function resourceOf(def) {
   return def?.food ? "rations" : "materials";
 }
 
-/** The work profile of a tile building (core's workProfile covers only resources). */
-export const buildingProfile = (target, workDC) => ({ die: target.die, dc: workDC, checkBonus: 0, bonusResources: target.bonusResources || 0 });
+/** The work profile of a tile building (core's workProfile covers only resources). −2 to the DC on a Fully Explored tile. */
+export const buildingProfile = (target, workDC, fullyExplored = false) => ({ die: target.die, dc: workDC - (fullyExplored ? 2 : 0), checkBonus: 0, bonusResources: target.bonusResources || 0 });
 
-/** Yield from a Work result: success = die + bonus; critical success doubles it (decided 2026-11-25). */
+/**
+ * Yield from a Work result (GM rulings, 2026-11-25). There is no passive yield: yields only come from Work.
+ * - main: the die. Success = the die; critical success = double the die; failure = half the die, minimum 1;
+ *   critical failure = nothing.
+ * - bonus: `bonusResources` units of Resources, separate from the main yield, on a success or better only;
+ *   doubled on a critical success.
+ * @returns { main, bonus }
+ */
 export function workYield(degree, dieTotal, bonusResources = 0) {
-  const base = Math.max(0, Math.trunc(Number(dieTotal) || 0)) + Math.max(0, Math.trunc(Number(bonusResources) || 0));
-  if (degree === "criticalSuccess") return base * 2;
-  if (degree === "success") return base;
-  return 0;
+  const die = Math.max(0, Math.trunc(Number(dieTotal) || 0)), bonus = Math.max(0, Math.trunc(Number(bonusResources) || 0));
+  switch (degree) {
+    case "criticalSuccess": return { main: die * 2, bonus: bonus * 2 };
+    case "success": return { main: die, bonus };
+    case "failure": return { main: Math.max(1, Math.floor(die / 2)), bonus: 0 };
+    default: return { main: 0, bonus: 0 };
+  }
 }
+/** Bonus resources always go to this stock. */
+export const BONUS_RESOURCE = "resources";

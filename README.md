@@ -1,4 +1,4 @@
-# Settlement Manager — v0.1.1
+# Settlement Manager — v0.1.2
 
 The **Settlement** module for the group's weekly settlement game on Foundry VTT 14 with Pathfinder 2e. It builds on
 **settlement-core**, which owns all the data (tiles, the settlement, resources, building slots and the week clock).
@@ -35,12 +35,16 @@ Design: `M:\RoboFoundry\PF2e\Empire Management\shared\proposals\settlement-manag
     empties the stock and shows a warning; nothing else happens automatically.
   - **Resolution:** a GM card *Open build attempts* spends each pending build's Materials (missing means 0) and posts
     one card per build. A player rolls a skill from the card with their own character, or the GM enters the result.
-    Critical success: +1 week and 1 Materials back. Success: +1 week. Failure: nothing. Critical failure: a 1d6
-    setback (1–3 text for the GM, 4–5 one extra Materials, 6 one week lost). One attempt per build per week.
+    Critical success: +1 week and 1 Materials back. Success: +1 week. Failure: nothing. Critical failure: a Mishap
+    d6, reported for the GM to apply (1–2 Injury: a PC takes 1d6 damage or a Team 2 Injuries; 3–4 one Materials access
+    disrupted until re-secured; 5–6 an encounter suited to the hex). One attempt per build per week.
   - **Week End:** the week's events are written to the settlement's *Chronicle* journal as a page *Week N*, and a recap
     is posted. Players can read the Chronicle; the GM can add to it.
 - **Record Work:** pick a found resource or a producing building, enter the result or roll with a character. Success
-  adds the die (plus any bonus); a critical success doubles it. The resource comes from what the resource or building
+  adds the die; a critical success doubles it; a failure gives half the die (minimum 1); a critical failure nothing.
+  A building's bonus resources are +1 Resources each, separate from the yield, on a success or better (doubled on a
+  critical success). A producing building on a Fully Explored tile has −2 to its Work DC. Yields only ever come
+  from Work. The resource comes from what the resource or building
   `produces`; a resource that yields specific items (no stock) is only written to the Chronicle for the GM to hand out.
 - **GM overrides:** ±1 week, finish now, cancel (no refund), remove (no refund), mark damaged, set week and phase,
   adjust stocks with a reason, edit population and morale.
@@ -91,14 +95,16 @@ one GM and one player client (the player owns a character). Save at least two re
    Materials; go to Resolution; *Open build attempts*: Materials go down by each build's cost; a build that can't be
    paid is listed as short. The player clicks *Roll <skill>* on the card, picks their character and rolls; the card
    updates with the result. Check each degree (the GM can *Enter result*): crit success +1 week and 1 Materials back,
-   success +1, failure 0, crit failure a 1d6 setback (1–3 text, 4–5 −1 Materials, 6 −1 week, never below 0). A 2-week
+   success +1, failure 0, crit failure a Mishap d6 posted as text (1–2 Injury, 3–4 access disrupted, 5–6 encounter),
+   with no change to progress or stocks. A 2-week
    building finishes after two successes. ±1 week and *Finish now* work.
 4. **Remove.** Remove a finished building that adds Security or housing: no refund, and the stats drop at once.
    Cancel a pending upgrade (e.g. Yield L3 on top of L2): the earlier level stays.
 5. **Upkeep.** Set population 12 with 9 Rations; advance to Upkeep: the card says −9 of 12, shortage of 3. *Apply*
    sets Rations to 0 and only warns. Also try *Edit* and *Skip*.
-6. **Record Work.** On a hex with a found resource or a Farm: *Record Work here…*, enter Success: the die is rolled
-   and added; Critical Success doubles it. The player's *Report Work* reaches the GM as a card.
+6. **Record Work.** On a hex with a found resource or a Farm: *Record Work here…*. Success adds the die; Critical
+   Success doubles it; Failure adds half the die (minimum 1). On a Pasture II, a success also adds +1 Resources (+2 on a
+   critical success). A Farm on a Fully Explored tile shows a DC 2 lower. The player's *Report Work* reaches the GM as a card.
 7. **Week End.** Advance to Week End: a page *Week N* appears in the Chronicle with the week's founding, upkeep,
    construction and Work; the player can open it from the History tab.
 8. **No GM.** Log the GM out: the player can read every tab; buttons are disabled with "A GM needs to be online".

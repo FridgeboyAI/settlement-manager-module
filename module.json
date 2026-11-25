@@ -2,7 +2,7 @@
   "id": "settlement-manager",
   "title": "Settlement Manager",
   "description": "The Settlement module for Settlement Core: found the settlement, build on it and on the map with weekly PF2e checks, track the shared resource pool and upkeep, and keep a weekly Chronicle.",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "authors": [
     {
       "name": "FridgeboyAI"
@@ -46,5 +46,5 @@
   "license": "MIT",
   "url": "https://github.com/FridgeboyAI/settlement-manager-module",
   "manifest": "https://github.com/FridgeboyAI/settlement-manager-module/releases/latest/download/module.json",
-  "download": "https://github.com/FridgeboyAI/settlement-manager-module/releases/download/v0.1.1/settlement-manager-v0.1.1.zip"
+  "download": "https://github.com/FridgeboyAI/settlement-manager-module/releases/download/v0.1.2/settlement-manager-v0.1.2.zip"
 }

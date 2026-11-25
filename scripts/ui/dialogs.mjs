@@ -68,7 +68,8 @@ function profileFor(t) {
     return { ...p, skills: api.get("discoverables", d?.type)?.skills || [] };
   }
   const slotDef = building(api.getTile(t.sceneId, t.key)?.slots.find(s => s.id === t.slotId)?.built);
-  return { ...buildingProfile(t, api.activityDC("work")), skills: slotDef?.skills || [] };
+  const fullyExplored = !!api.tileDCs(t.sceneId, t.key)?.fullyExplored;
+  return { ...buildingProfile(t, api.activityDC("work"), fullyExplored), skills: slotDef?.skills || [] };
 }
 
 /** GM: record a Work result. Player: report Work for the GM to record. Returns true when something was recorded. */
@@ -135,7 +136,7 @@ export async function openRecordWork(sceneId, key) {
     degree = r.degree;
   }
   const { recordWork } = await import("../flows.mjs");
-  const amount = await recordWork({ label: res.t.label, die: p.die, degree, bonusResources: p.bonusResources || 0, resource: res.resource }).catch(reportError);
-  if (amount !== undefined) ui.notifications.info(`Work: ${degreeLabel(degree)}, +${amount} ${res.resource ? resourceLabel(res.resource) : "item(s) for the GM to hand out"}.`);
-  return amount !== undefined;
+  const y = await recordWork({ label: res.t.label, die: p.die, degree, bonusResources: p.bonusResources || 0, resource: res.resource }).catch(reportError);
+  if (y) ui.notifications.info(`Work: ${degreeLabel(degree)}, +${y.main} ${res.resource ? resourceLabel(res.resource) : "item(s) for the GM to hand out"}${y.bonus ? `, +${y.bonus} ${resourceLabel("resources")}` : ""}.`);
+  return !!y;
 }
