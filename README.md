@@ -11,6 +11,16 @@ map with PF2e skill checks, the shared resource pool, upkeep, recording Work, an
 
 Design: `M:\RoboFoundry\PF2e\Empire Management\shared\proposals\settlement-manager.md`.
 
+## Install a test build (the `test` branch)
+This branch carries a ready-made `settlement-manager.zip`. Either:
+- In Foundry's *Install Module* screen, paste the manifest URL
+  `https://raw.githubusercontent.com/FridgeboyAI/settlement-manager-module/test/module.json`, or
+- download `settlement-manager.zip` from this branch and unzip it into `Data/modules/settlement-manager/`
+  (so that `module.json` sits directly in that folder), then restart Foundry.
+
+settlement-core 0.2.0 must be installed too (copy it in by hand until it has a release) with *Load the Liftland
+content set* on. Test builds keep this manifest, so *Check for updates* picks up a newer test build.
+
 ## Install
 - Manifest URL: `https://github.com/FridgeboyAI/settlement-manager-module/releases/latest/download/module.json`
 - It requires **settlement-core** (0.2.0 or later); Foundry offers to install it. Turn on settlement-core's

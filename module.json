@@ -3,22 +3,48 @@
   "title": "Settlement Manager",
   "description": "The Settlement module for Settlement Core: found the settlement, build on it and on the map with weekly PF2e checks, track the shared resource pool and upkeep, and keep a weekly Chronicle.",
   "version": "0.1.0",
-  "authors": [{ "name": "FridgeboyAI" }],
-  "compatibility": { "minimum": "14", "verified": "14" },
-  "relationships": {
-    "systems": [{ "id": "pf2e", "type": "system" }],
-    "requires": [{
-      "id": "settlement-core",
-      "type": "module",
-      "manifest": "https://github.com/FVTT-Mods-Hawthorne/settlement-core-module/releases/download/v0.2.0/module.json",
-      "compatibility": { "minimum": "0.2.0" }
-    }]
+  "authors": [
+    {
+      "name": "FridgeboyAI"
+    }
+  ],
+  "compatibility": {
+    "minimum": "14",
+    "verified": "14"
   },
-  "esmodules": ["scripts/main.mjs"],
-  "styles": ["styles/module.css"],
-  "languages": [{ "lang": "en", "name": "English", "path": "lang/en.json" }],
+  "relationships": {
+    "systems": [
+      {
+        "id": "pf2e",
+        "type": "system"
+      }
+    ],
+    "requires": [
+      {
+        "id": "settlement-core",
+        "type": "module",
+        "manifest": "https://github.com/FVTT-Mods-Hawthorne/settlement-core-module/releases/download/v0.2.0/module.json",
+        "compatibility": {
+          "minimum": "0.2.0"
+        }
+      }
+    ]
+  },
+  "esmodules": [
+    "scripts/main.mjs"
+  ],
+  "styles": [
+    "styles/module.css"
+  ],
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
+    }
+  ],
   "license": "MIT",
   "url": "https://github.com/FridgeboyAI/settlement-manager-module",
-  "manifest": "https://github.com/FridgeboyAI/settlement-manager-module/releases/latest/download/module.json",
-  "download": "https://github.com/FridgeboyAI/settlement-manager-module/releases/download/v0.1.0/settlement-manager-v0.1.0.zip"
+  "manifest": "https://raw.githubusercontent.com/FridgeboyAI/settlement-manager-module/test/module.json",
+  "download": "https://raw.githubusercontent.com/FridgeboyAI/settlement-manager-module/test/settlement-manager.zip"
 }
