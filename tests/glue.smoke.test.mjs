@@ -160,4 +160,28 @@ test("a week of play as the host GM", async () => {
   assert.equal(core.getClock().week, 1);
   assert.deepEqual(data().pub.attempts, {});
   assert.ok(!notes.some(([t]) => t === "error"), `no errors: ${JSON.stringify(notes.filter(([t]) => t === "error"))}`);
+
+  // every window view renders, for the GM and for a player
+  const { SettlementsApp } = await import("../scripts/ui/app.mjs");
+  const { HexPanel } = await import("../scripts/ui/hex.mjs");
+  const chat = await import("../scripts/chat.mjs");
+  const app = new SettlementsApp();
+  for (const asGM of [true, false]) {
+    user.isGM = asGM;
+    for (const tab of ["overview", "buildings", "resources", "history"]) {
+      app.tab = tab;
+      const html = await app._renderHTML();
+      assert.match(html, /Haven/, `${tab} renders (${asGM ? "GM" : "player"})`);
+      if (!asGM) assert.doesNotMatch(html, /data-action="(remove|reload|adjust|advance)"/, "no GM controls for players");
+    }
+    const panel = new HexPanel(); panel.sceneId = "S"; panel.key = "1,1"; panel.open = new Set([JSON.stringify({ kind: "tile", sceneId: "S", key: "1,1" })]);
+    assert.match(await panel._renderHTML(), /Riverbend/);
+  }
+  user.isGM = true;
+  // an attempt card renders for an open attempt
+  await core.attach({ kind: "settlement", id: sid }, "workshop-1");
+  await Flows.openAttempts();
+  const card = messages.filter(m => m.flags?.["settlement-manager"]?.card?.type === "attempt").at(-1);
+  assert.match(card.content, /Roll Crafting/);
+  assert.equal(typeof chat.onRenderChatMessage, "function");
 });
