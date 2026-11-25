@@ -97,7 +97,7 @@ export async function openRecordWork(sceneId, key) {
   const content = `
     <label class="sm-row">Worked <select name="t">${options}</select></label>
     <p class="sm-sub" data-profile>Die ${h(first.die)} · DC ${first.dc}${first.checkBonus ? ` · +${first.checkBonus} to the check` : ""}${first.bonusResources ? ` · +${first.bonusResources} bonus` : ""}</p>
-    <label class="sm-row">Resource <select name="resource">${resources.map(r => `<option value="${h(r.id)}" ${r.id === targets[0].resource ? "selected" : ""}>${h(r.label || r.id)}</option>`).join("")}</select></label>
+    <label class="sm-row">Resource <select name="resource">${resources.map(r => `<option value="${h(r.id)}" ${r.id === targets[0].resource ? "selected" : ""}>${h(r.label || r.id)}</option>`).join("")}<option value="" ${targets[0].resource === "" ? "selected" : ""}>Items (the GM hands them out)</option></select></label>
     <label class="sm-row">Result <select name="degree">${DEGREES.slice().reverse().map(d => `<option value="${d}" ${d === "success" ? "selected" : ""}>${degreeLabel(d)}</option>`).join("")}</select></label>
     <p class="sm-sub">Enter the result from the table, or roll with a character (the check bonus is taken off the DC).</p>`;
   const res = await D().wait({
@@ -136,6 +136,6 @@ export async function openRecordWork(sceneId, key) {
   }
   const { recordWork } = await import("../flows.mjs");
   const amount = await recordWork({ label: res.t.label, die: p.die, degree, bonusResources: p.bonusResources || 0, resource: res.resource }).catch(reportError);
-  if (amount !== undefined) ui.notifications.info(`Work: ${degreeLabel(degree)}, +${amount} ${resourceLabel(res.resource)}.`);
+  if (amount !== undefined) ui.notifications.info(`Work: ${degreeLabel(degree)}, +${amount} ${res.resource ? resourceLabel(res.resource) : "item(s) for the GM to hand out"}.`);
   return amount !== undefined;
 }

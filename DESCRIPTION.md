@@ -1,6 +1,6 @@
 # Settlement Manager
 
-Module id: `settlement-manager` · Version: `0.1.0` (matches module.json) · Stage: `Testing`
+Module id: `settlement-manager` · Version: `0.1.1` (matches module.json) · Stage: `Testing`
 
 ## What it does
 The Settlement module on settlement-core. The GM founds one settlement on a revealed hex; it holds the shared pool
@@ -35,7 +35,7 @@ settlement-core's state under `modules["settlement-manager"]` (published buildin
 events, Chronicle ids; GM notes and requests in the `gm` half). Chronicle journals are ordinary journal entries.
 
 ## Relies on
-- **settlement-core** ≥ 0.2.0 (required): reads, writes and hooks listed in the proposal §10a; the API is checked at
+- **settlement-core** ≥ 0.2.1 (required): reads, writes and hooks listed in the proposal §10a; the API is checked at
   startup and a missing call turns off only the features that need it. No lib module.
 - **PF2e**: `actor.skills[slug].roll({ dc })` and the roll's `degreeOfSuccess`.
 - **Foundry 14**: `ApplicationV2`, `DialogV2`, `FilePicker.browse`, `JournalEntry`/`JournalEntryPage`, `ChatMessage`
@@ -53,7 +53,7 @@ events, Chronicle ids; GM notes and requests in the `gm` half). Chronicle journa
 | `scripts/settings.mjs` | World settings |
 | `scripts/ui/*.mjs` | Settlements window, Hex buildings panel and tool, dialogs, view helpers |
 | `scripts/logic/*.mjs` | Rules without Foundry: building files, stats, construction, upkeep, Work, Chronicle, module-data actions, API check |
-| `tests/*.test.mjs` | Rules tests and a glue smoke test, run against settlement-core v0.2.0 |
+| `tests/*.test.mjs` | Rules tests and a glue smoke test, run against settlement-core v0.2.1 |
 | `tests/fetch-core.mjs` | Downloads the pinned settlement-core version into `tests/.core/` (not committed) before `npm test` |
 | `.github/workflows/release.yml` | Final `vX.Y.Z` tag → full release with zip and `module.json` (stable `releases/latest` manifest) |
 

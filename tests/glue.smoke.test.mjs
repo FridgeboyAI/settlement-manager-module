@@ -138,6 +138,16 @@ test("a week of play as the host GM", async () => {
   await Flows.removeBuilding(host, gSlot.id);
   assert.ok(!core.getSettlement(sid).slots.some(s => s.id === gSlot.id));
 
+  // cancelling a pending upgrade keeps the finished earlier level
+  await core.saveTile("S", "2,2", { terrain: "grassland", revealed: true });
+  const did = await core.addDiscoverable("S", "2,2", { type: "herb-cluster", tier: 3, found: true });
+  const dHost = { kind: "discoverable", sceneId: "S", key: "2,2", id: did };
+  await core.attach(dHost, "yield-1", true); await core.attach(dHost, "yield-2", true);
+  const upSlot = await core.attach(dHost, "yield-3");
+  await Flows.cancelBuild(dHost, upSlot);
+  const dSlots = core.getTile("S", "2,2").discoverables[0].slots;
+  assert.equal(dSlots.length, 1); assert.equal(dSlots[0].built, "yield-2"); assert.equal(dSlots[0].pending, null);
+
   // Record Work: a critical success doubles the yield
   nextRoll = 3;
   assert.equal(await Flows.recordWork({ label: "Farm", die: "d4", degree: "criticalSuccess", bonusResources: 1, resource: "rations" }), 8);

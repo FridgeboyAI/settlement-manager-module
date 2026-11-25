@@ -5,7 +5,7 @@ import { CORE_MIN_VERSION, compareVersions } from "./const.mjs";
 export const FEATURE_NEEDS = {
   settlement: ["getSettlement", "getSettlements", "createSettlement", "patchSettlement", "request"],
   stats: ["tileSecurity", "isSecure", "builtOn", "get"],
-  buildings: ["define", "all", "get", "canAttach", "attach", "addProgress", "detach", "buildDC", "builtOn"],
+  buildings: ["define", "all", "get", "canAttach", "attach", "addProgress", "detach", "cancelPending", "buildDC", "builtOn"],
   resources: ["adjustResource", "setAccess"],
   work: ["workProfile", "activityDC", "getTile", "adjustResource"],
   week: ["getClock", "advancePhase", "request"],

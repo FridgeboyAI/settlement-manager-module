@@ -1,4 +1,4 @@
-# Settlement Manager — v0.1.0
+# Settlement Manager — v0.1.1
 
 The **Settlement** module for the group's weekly settlement game on Foundry VTT 14 with Pathfinder 2e. It builds on
 **settlement-core**, which owns all the data (tiles, the settlement, resources, building slots and the week clock).
@@ -18,12 +18,12 @@ This branch carries a ready-made `settlement-manager.zip`. Either:
 - download `settlement-manager.zip` from this branch and unzip it into `Data/modules/settlement-manager/`
   (so that `module.json` sits directly in that folder), then restart Foundry.
 
-settlement-core 0.2.0 must be installed too (copy it in by hand until it has a release) with *Load the Liftland
+settlement-core 0.2.1 must be installed too (copy it in by hand until its release is published) with *Load the Liftland
 content set* on. Test builds keep this manifest, so *Check for updates* picks up a newer test build.
 
 ## Install
 - Manifest URL: `https://github.com/FridgeboyAI/settlement-manager-module/releases/latest/download/module.json`
-- It requires **settlement-core** (0.2.0 or later); Foundry offers to install it. Turn on settlement-core's
+- It requires **settlement-core** (0.2.1 or later); Foundry offers to install it. Turn on settlement-core's
   *Load the Liftland content set* for the default buildings.
 - For testing a build branch, deploy it with `M:\RoboFoundry\tools\deploy-modules.ps1 -Module settlement-manager`.
 
@@ -50,7 +50,8 @@ content set* on. Test builds keep this manifest, so *Check for updates* picks up
   - **Week End:** the week's events are written to the settlement's *Chronicle* journal as a page *Week N*, and a recap
     is posted. Players can read the Chronicle; the GM can add to it.
 - **Record Work:** pick a found resource or a producing building, enter the result or roll with a character. Success
-  adds the die (plus any bonus); a critical success doubles it.
+  adds the die (plus any bonus); a critical success doubles it. The resource comes from what the resource or building
+  `produces`; a resource that yields specific items (no stock) is only written to the Chronicle for the GM to hand out.
 - **GM overrides:** ±1 week, finish now, cancel (no refund), remove (no refund), mark damaged, set week and phase,
   adjust stocks with a reason, edit population and morale.
 - **No GM online:** everyone can read, every action is disabled.
@@ -86,7 +87,7 @@ the Settlements window (it also runs when the GM logs in). Use settlement-core's
 `.openHex(sceneId, "row,col")` opens a hex; `.reloadBuildings()` reloads the GM's files.
 
 ## Manual test checklist
-Test world: Foundry 14, PF2e, settlement-core 0.2.0 with Liftland on, settlement-hex-manager present but not needed,
+Test world: Foundry 14, PF2e, settlement-core 0.2.1 with Liftland on, settlement-hex-manager present but not needed,
 one GM and one player client (the player owns a character). Save at least two revealed hexes in settlement-core first
 (one with a found resource, e.g. via `game.modules.get("settlement-core").api`).
 
@@ -103,7 +104,7 @@ one GM and one player client (the player owns a character). Save at least two re
    success +1, failure 0, crit failure a 1d6 setback (1–3 text, 4–5 −1 Materials, 6 −1 week, never below 0). A 2-week
    building finishes after two successes. ±1 week and *Finish now* work.
 4. **Remove.** Remove a finished building that adds Security or housing: no refund, and the stats drop at once.
-   Cancel a pending upgrade: the earlier level stays.
+   Cancel a pending upgrade (e.g. Yield L3 on top of L2): the earlier level stays.
 5. **Upkeep.** Set population 12 with 9 Rations; advance to Upkeep: the card says −9 of 12, shortage of 3. *Apply*
    sets Rations to 0 and only warns. Also try *Edit* and *Skip*.
 6. **Record Work.** On a hex with a found resource or a Farm: *Record Work here…*, enter Success: the die is rolled
