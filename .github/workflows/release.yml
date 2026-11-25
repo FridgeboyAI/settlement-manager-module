@@ -1,0 +1,60 @@
+# Final release: runs when the user pushes a vX.Y.Z tag after merging into main (rc tags are excluded).
+# Publishes a full (non-pre-release) GitHub release with the installable zip and module.json, so Foundry's
+# install and update work through the stable releases/latest manifest URL.
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+      - "!v*-rc*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate tag and manifest
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json, os, re
+          from pathlib import Path
+          m = json.loads(Path("module.json").read_text(encoding="utf-8"))
+          tag = os.environ["GITHUB_REF_NAME"]
+          repo = os.environ["GITHUB_REPOSITORY"]
+          assert re.fullmatch(r"v\d+\.\d+\.\d+", tag), f"Release tags must be vMAJOR.MINOR.PATCH, got {tag!r}"
+          assert tag == f"v{m['version']}", f"Tag {tag} does not match module.json version {m['version']}"
+          zip_name = f"{m['id']}-{tag}.zip"
+          want_manifest = f"https://github.com/{repo}/releases/latest/download/module.json"
+          want_download = f"https://github.com/{repo}/releases/download/{tag}/{zip_name}"
+          assert m.get("manifest") == want_manifest, f"manifest must be {want_manifest}, got {m.get('manifest')}"
+          assert m.get("download") == want_download, f"download must be {want_download}, got {m.get('download')}"
+          with open(os.environ["GITHUB_ENV"], "a", encoding="utf-8") as env:
+              env.write(f"RELEASE_TAG={tag}\nRELEASE_ZIP={zip_name}\n")
+          PY
+
+      - name: Build the installable zip
+        shell: bash
+        run: |
+          zip -q -r "$RELEASE_ZIP" module.json README.md DESCRIPTION.md LICENSE scripts styles lang
+          unzip -t "$RELEASE_ZIP"
+          test "$(unzip -Z1 "$RELEASE_ZIP" | head -n 1)" = "module.json"
+
+      - name: Publish the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          if ! gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+            gh release create "$RELEASE_TAG" --title "Settlement Manager $RELEASE_TAG" \
+              --notes-file DESCRIPTION.md --latest --verify-tag
+          fi
+          gh release upload "$RELEASE_TAG" "$RELEASE_ZIP" module.json --clobber
+          gh release view "$RELEASE_TAG" --json assets --jq '.assets[].name' | tee /tmp/assets.txt
+          grep -Fx module.json /tmp/assets.txt
+          grep -Fx "$RELEASE_ZIP" /tmp/assets.txt
