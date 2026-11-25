@@ -2,7 +2,7 @@
   "id": "settlement-manager",
   "title": "Settlement Manager",
   "description": "The Settlement module for Settlement Core: found the settlement, build on it and on the map with weekly PF2e checks, track the shared resource pool and upkeep, and keep a weekly Chronicle.",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "authors": [
     {
       "name": "FridgeboyAI"

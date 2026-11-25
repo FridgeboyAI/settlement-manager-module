@@ -4,9 +4,9 @@
  */
 import { ID, attemptKey, escapeHTML } from "./logic/const.mjs";
 import { materialsPerWeek } from "./logic/buildings.mjs";
-import { pendingBuilds, planAttempts, attemptResult, setbackResult, degreeLabel } from "./logic/construction.mjs";
+import { pendingBuilds, planAttempts, attemptResult, mishapResult, degreeLabel } from "./logic/construction.mjs";
 import { computeUpkeep, upkeepText } from "./logic/upkeep.mjs";
-import { workYield } from "./logic/work.mjs";
+import { workYield, BONUS_RESOURCE } from "./logic/work.mjs";
 import { weekPageHTML, recapText, pageName, chronicleName } from "./logic/chronicle.mjs";
 import { core, run, data, mainId, mainSettlement, building, resourceLabel, allHosts, hostInfo, isHost } from "./link.mjs";
 import { parseFlat } from "./settings.mjs";
@@ -210,13 +210,10 @@ async function applyAttempt(key, at) {
   if (r.refund) await api.adjustResource(at.settlementId, "materials", r.refund);
   if (r.setback) {
     const roll = await new Roll("1d6").evaluate();
-    await roll.toMessage({ speaker: { alias: "Settlement Manager" }, flavor: `Setback for ${escapeHTML(label)}` }, { rollMode: "publicroll" });
-    const s = api.getSettlement(at.settlementId);
-    const sb = setbackResult(roll.total, materials(s));
-    if (sb.materials) await api.adjustResource(at.settlementId, "materials", -sb.materials);
-    if (sb.weeks) { try { await api.addProgress(at.host, at.slotId, sb.weeks); } catch (e) { /* the slot may have no pending build any more */ } }
-    lines.push(`(${roll.total}) ${sb.text}`);
-    await log("build-setback", `${label}: ${sb.text}`, at.settlementId);
+    await roll.toMessage({ speaker: { alias: "Settlement Manager" }, flavor: `Mishap for ${escapeHTML(label)}` }, { rollMode: "publicroll" });
+    const m = mishapResult(roll.total);
+    lines.push(`(${roll.total}) ${m.text}`);
+    await log("build-setback", `${label}: ${m.text}`, at.settlementId);
   }
   const text = lines.join(" ");
   await run("finishAttempt", { key, result: text });
@@ -245,24 +242,31 @@ export async function applyUpkeep(planned) {
 }
 
 /* ---------------------------------------------------------------- Work */
-/** Roll the yield die and add the yield to the settlement. Returns the yield. */
+/** Roll the yield die and add the yield to the settlement. Returns { main, bonus }. */
 export async function recordWork({ label, die, degree, bonusResources = 0, resource }) {
   const s = mainSettlement(); if (!s) throw Error("Found the settlement first.");
   let total = 0;
-  if (degree === "success" || degree === "criticalSuccess") {
+  if (degree !== "criticalFailure") {
     const roll = await new Roll(`1${die}`).evaluate();
     await roll.toMessage({ speaker: { alias: "Settlement Manager" }, flavor: `Work yield: ${escapeHTML(label)}` });
     total = roll.total;
   }
-  const amount = workYield(degree, total, bonusResources);
+  const y = workYield(degree, total, bonusResources);
+  const parts = [];
   if (!resource) {
     // Yields specific items, not a stock: the GM hands them out.
-    await log("work", `Work on ${label}: ${degreeLabel(degree)}${amount ? `, ${amount} item(s) for the GM to hand out` : ", no yield"}.`);
-    return amount;
+    if (y.main) parts.push(`${y.main} item(s) for the GM to hand out`);
+  } else if (y.main) {
+    await core().adjustResource(s.id, resource, y.main);
+    parts.push(`+${y.main} ${resourceLabel(resource)}`);
   }
-  if (amount) await core().adjustResource(s.id, resource, amount);
-  await log("work", `Work on ${label}: ${degreeLabel(degree)}, ${amount ? `+${amount} ${resourceLabel(resource)}` : "no yield"}${degree === "criticalSuccess" && amount ? " (doubled)" : ""}.`);
-  return amount;
+  if (y.bonus) {
+    await core().adjustResource(s.id, BONUS_RESOURCE, y.bonus);
+    parts.push(`+${y.bonus} ${resourceLabel(BONUS_RESOURCE)} (bonus)`);
+  }
+  const note = degree === "criticalSuccess" ? " (doubled)" : degree === "failure" && y.main ? " (half the die)" : "";
+  await log("work", `Work on ${label}: ${degreeLabel(degree)}, ${parts.length ? parts.join(", ") : "no yield"}${note}.`);
+  return y;
 }
 
 /* ---------------------------------------------------------------- Chronicle and Week End */

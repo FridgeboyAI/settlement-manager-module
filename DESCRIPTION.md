@@ -1,12 +1,12 @@
 # Settlement Manager
 
-Module id: `settlement-manager` · Version: `0.1.1` (matches module.json) · Stage: `Testing`
+Module id: `settlement-manager` · Version: `0.1.2` (matches module.json) · Stage: `Testing`
 
 ## What it does
 The Settlement module on settlement-core. The GM founds one settlement on a revealed hex; it holds the shared pool
 of resources. A Settlements window shows its stats (with breakdowns), buildings, stocks and history; a Hex buildings
 tool shows any hex's buildings and resources. Buildings are started by the GM or requested by players, then built
-through one PF2e skill check per week (degrees of success and a 1d6 setback chart). Each week the module helps the
+through one PF2e skill check per week (degrees of success; a critical failure rolls the shared Mishap d6 for the GM). Each week the module helps the
 GM with upkeep (1 Ration per population), build attempts and a Chronicle journal page.
 
 ## When it shows up

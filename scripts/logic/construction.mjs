@@ -42,25 +42,21 @@ export function attemptResult(degree, cost) {
     case "criticalSuccess": return { progress: 1, refund: cost > 0 ? 1 : 0, setback: false, text: cost > 0 ? "+1 week and 1 Materials refunded" : "+1 week" };
     case "success": return { progress: 1, refund: 0, setback: false, text: "+1 week" };
     case "failure": return { progress: 0, refund: 0, setback: false, text: "No progress" };
-    case "criticalFailure": return { progress: 0, refund: 0, setback: true, text: "No progress, and a setback (1d6)" };
+    case "criticalFailure": return { progress: 0, refund: 0, setback: true, text: "No progress, and a Mishap (1d6)" };
     default: throw Error(`Unknown degree "${degree}"`);
   }
 }
 
 /**
- * The 1d6 setback chart. `materials` is what the settlement has left.
- * @returns { kind: "text" | "materials" | "week", materials, weeks, text }
+ * The shared Mishap d6 (GM ruling, 2026-11-25). Every outcome is applied by the GM; the module only reports it.
+ * @returns { kind: "injury" | "access" | "encounter", text }
  */
-export function setbackResult(d6, materials) {
+export function mishapResult(d6) {
   const n = Math.trunc(Number(d6));
-  if (n < 1 || n > 6) throw Error("A setback needs a d6 result");
-  if (n <= 3) return { kind: "text", materials: 0, weeks: 0, text: "Setback: the Team suffers 1 Injury or a PC takes 1d6 damage (GM applies)." };
-  if (n <= 5) {
-    return materials >= 1
-      ? { kind: "materials", materials: 1, weeks: 0, text: "Setback: 1 extra Materials spent." }
-      : { kind: "text", materials: 0, weeks: 0, text: "Setback: 1 extra Materials is due, but there are none left (GM decides)." };
-  }
-  return { kind: "week", materials: 0, weeks: -1, text: "Setback: the project loses 1 week of progress." };
+  if (n < 1 || n > 6) throw Error("A mishap needs a d6 result");
+  if (n <= 2) return { kind: "injury", text: "Mishap: Injury. A PC takes 1d6 damage, or a Team takes 2 Injuries (GM applies)." };
+  if (n <= 4) return { kind: "access", text: "Mishap: one Materials access is disrupted until it is re-secured (GM chooses which and unticks it under Access)." };
+  return { kind: "encounter", text: "Mishap: an encounter suited to the hex (GM runs it)." };
 }
 
 export const degreeLabel = d => DEGREE_LABELS[d] || d;

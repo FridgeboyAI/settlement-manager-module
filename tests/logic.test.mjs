@@ -6,9 +6,9 @@ import { ID, attemptKey, compareVersions } from "../scripts/logic/const.mjs";
 import { checkCoreApi, missingFields, SETTLEMENT_FIELDS } from "../scripts/logic/check.mjs";
 import { parseBuildingFile, combineBuildingFiles, validateDefinition, materialsPerWeek } from "../scripts/logic/buildings.mjs";
 import { computeStats } from "../scripts/logic/stats.mjs";
-import { pendingBuilds, planAttempts, attemptResult, setbackResult, degreeName } from "../scripts/logic/construction.mjs";
+import { pendingBuilds, planAttempts, attemptResult, mishapResult, degreeName } from "../scripts/logic/construction.mjs";
 import { computeUpkeep, editUpkeep, upkeepText } from "../scripts/logic/upkeep.mjs";
-import { workTargets, workYield, resourceOf } from "../scripts/logic/work.mjs";
+import { workTargets, workYield, resourceOf, buildingProfile } from "../scripts/logic/work.mjs";
 import { weekPageHTML, recapText, pageName } from "../scripts/logic/chronicle.mjs";
 import { createActions, moduleData } from "../scripts/logic/data.mjs";
 
@@ -37,7 +37,7 @@ test("checkCoreApi disables only features whose calls are missing", () => {
   const api = { version: "0.2.1" };
   for (const n of ["getSettlement", "getSettlements", "createSettlement", "patchSettlement", "request", "getClock", "advancePhase",
     "getModuleData", "registerAction", "tileSecurity", "isSecure", "builtOn", "get", "define", "all", "canAttach", "attach",
-    "addProgress", "detach", "cancelPending", "buildDC", "adjustResource", "setAccess", "workProfile", "activityDC", "getTile"]) api[n] = () => {};
+    "addProgress", "detach", "cancelPending", "buildDC", "adjustResource", "setAccess", "workProfile", "activityDC", "getTile", "tileDCs"]) api[n] = () => {};
   let r = checkCoreApi(api);
   assert.deepEqual(r.disabled, []); assert.ok(r.versionOk);
   delete api.workProfile;
@@ -171,26 +171,24 @@ test("planAttempts spends Materials in order and marks shortages", () => {
   assert.equal(plan.length, 1, "one attempt per build per week");
 });
 
-test("attempt results and the setback chart", () => {
+test("attempt results and the shared Mishap d6", () => {
   assert.deepEqual(attemptResult("criticalSuccess", 2), { progress: 1, refund: 1, setback: false, text: "+1 week and 1 Materials refunded" });
   assert.equal(attemptResult("criticalSuccess", 0).refund, 0);
   assert.equal(attemptResult("success", 2).progress, 1);
   assert.equal(attemptResult("failure", 2).progress, 0);
   assert.equal(attemptResult("criticalFailure", 2).setback, true);
-  for (const n of [1, 2, 3]) assert.equal(setbackResult(n, 5).kind, "text");
-  assert.equal(setbackResult(4, 5).materials, 1);
-  assert.equal(setbackResult(5, 0).kind, "text");
-  assert.equal(setbackResult(6, 0).weeks, -1);
-  assert.throws(() => setbackResult(7, 0));
+  assert.deepEqual([1, 2, 3, 4, 5, 6].map(n => mishapResult(n).kind), ["injury", "injury", "access", "access", "encounter", "encounter"]);
+  assert.match(mishapResult(1).text, /2 Injuries/);
+  assert.throws(() => mishapResult(7));
   assert.equal(degreeName(3), "criticalSuccess"); assert.equal(degreeName(0), "criticalFailure"); assert.equal(degreeName("nope"), null);
 });
 
-test("a 2-week building finishes through core after two successes, and a setback can't go below 0", () => {
+test("a 2-week building finishes through core after two successes", () => {
   const { r, s } = world();
   const host = { kind: "settlement", id: "main" };
   const slotId = Core.attach(s, r, host, "granary-2");
   assert.equal(Core.weeksFor(r.get("buildings", "granary-2")), 2);
-  Core.addProgress(s, r, host, slotId, setbackResult(6, 0).weeks);
+  Core.addProgress(s, r, host, slotId, attemptResult("criticalFailure", 0).progress);
   assert.equal(s.settlements.main.slots[0].pending.progress, 0);
   Core.addProgress(s, r, host, slotId, attemptResult("success", 0).progress);
   const res = Core.addProgress(s, r, host, slotId, attemptResult("criticalSuccess", 0).progress);
@@ -212,7 +210,7 @@ test("upkeep: 1 Ration per population, shortages only warn", () => {
   assert.equal(computeUpkeep({ population: 0 }).lines.length, 0);
 });
 
-test("work targets and yields (critical success doubles)", () => {
+test("work targets and yields (GM rulings)", () => {
   const { r, s } = world();
   const t = Core.getTile(s, "sc", "3,4");
   t.discoverables.push({ ...Core.blankDiscoverable(), id: "d1", type: "grain-grass-stand", name: "Grain", tier: 1, found: true });
@@ -222,9 +220,13 @@ test("work targets and yields (critical success doubles)", () => {
   const targets = workTargets({ tile: t, sceneId: "sc", getBuilding: id => r.get("buildings", id), getDiscoverable: id => r.get("discoverables", id) });
   assert.deepEqual(targets.map(x => [x.kind, x.label, x.resource]), [["discoverable", "Grain", "rations"], ["building", "Farm I", "rations"]]);
   assert.equal(targets[1].die, "d4");
-  assert.equal(workYield("success", 3, 1), 4);
-  assert.equal(workYield("criticalSuccess", 3, 1), 8);
-  assert.equal(workYield("failure", 3, 1), 0);
+  assert.deepEqual(workYield("success", 3, 1), { main: 3, bonus: 1 });
+  assert.deepEqual(workYield("criticalSuccess", 3, 1), { main: 6, bonus: 2 }, "doubles the die and the bonus");
+  assert.deepEqual(workYield("failure", 5, 1), { main: 2, bonus: 0 }, "half the die, no bonus");
+  assert.deepEqual(workYield("failure", 1, 0), { main: 1, bonus: 0 }, "minimum 1");
+  assert.deepEqual(workYield("criticalFailure", 6, 1), { main: 0, bonus: 0 });
+  assert.equal(buildingProfile({ die: "d4" }, 25, true).dc, 23, "Fully Explored: -2");
+  assert.equal(buildingProfile({ die: "d4" }, 25, false).dc, 25);
 });
 
 test("Work yields the discoverable's produces; items-only resources yield no stock", () => {
