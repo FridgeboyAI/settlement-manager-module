@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import * as Core from "./vendor/settlement-core/core.mjs";
-import { LIFTLAND } from "./vendor/settlement-core/content-liftland.mjs";
+import * as Core from "./.core/core.mjs";
+import { LIFTLAND } from "./.core/content-liftland.mjs";
 import { ID, attemptKey, compareVersions } from "../scripts/logic/const.mjs";
 import { checkCoreApi, missingFields, SETTLEMENT_FIELDS } from "../scripts/logic/check.mjs";
 import { parseBuildingFile, combineBuildingFiles, validateDefinition, materialsPerWeek } from "../scripts/logic/buildings.mjs";

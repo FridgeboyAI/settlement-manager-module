@@ -53,7 +53,8 @@ events, Chronicle ids; GM notes and requests in the `gm` half). Chronicle journa
 | `scripts/settings.mjs` | World settings |
 | `scripts/ui/*.mjs` | Settlements window, Hex buildings panel and tool, dialogs, view helpers |
 | `scripts/logic/*.mjs` | Rules without Foundry: building files, stats, construction, upkeep, Work, Chronicle, module-data actions, API check |
-| `tests/*.test.mjs` | Rules tests and a glue smoke test, run against `tests/vendor/settlement-core` (pinned v0.2.0) |
+| `tests/*.test.mjs` | Rules tests and a glue smoke test, run against settlement-core v0.2.0 |
+| `tests/fetch-core.mjs` | Downloads the pinned settlement-core version into `tests/.core/` (not committed) before `npm test` |
 | `.github/workflows/release.yml` | Final `vX.Y.Z` tag → full release with zip and `module.json` (stable `releases/latest` manifest) |
 
 ## Known limits

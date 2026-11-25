@@ -5,8 +5,8 @@ The **Settlement** module for the group's weekly settlement game on Foundry VTT 
 Settlement Manager adds the windows and the weekly procedures: founding the settlement, building on it and on the
 map with PF2e skill checks, the shared resource pool, upkeep, recording Work, and a weekly Chronicle.
 
-> **Untested in Foundry.** The rules and the wiring pass Node tests (`node --test tests/*.test.mjs`), including a
-> full week played against the real settlement-core code with stubbed Foundry globals. Nothing has run in a live
+> **Untested in Foundry.** The rules and the wiring pass Node tests (`npm test`, which first downloads the pinned
+> settlement-core version into `tests/.core/`), including a full week played against the real settlement-core code with stubbed Foundry globals. Nothing has run in a live
 > world yet. Back up your world first.
 
 Design: `M:\RoboFoundry\PF2e\Empire Management\shared\proposals\settlement-manager.md`.

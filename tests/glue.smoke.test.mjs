@@ -67,7 +67,7 @@ globalThis.game = {
   i18n: { localize: s => s }
 };
 
-await import("./vendor/settlement-core/module.mjs");
+await import("./.core/module.mjs");
 await import("../scripts/main.mjs");
 const wait = (ms = 20) => new Promise(r => setTimeout(r, ms));
 
