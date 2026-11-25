@@ -133,13 +133,13 @@ export async function finishNow(host, slotId) {
   await changeProgress(host, slotId, 999);
 }
 
-/** Cancel a pending build without refund. An upgrade in progress keeps the earlier level. */
+/** Cancel a pending build without refund. An upgrade in progress keeps the finished earlier level (core's cancelPending). */
 export async function cancelBuild(host, slotId) {
   const slot = slotOf(host, slotId); if (!slot?.pending) return;
   const label = building(slot.pending.building)?.label || slot.pending.building;
-  await core().detach(host, slotId);
-  if (slot.built) await core().attach(host, slot.built, true);
-  await log("build-removed", `${label} was cancelled (no refund).`);
+  const result = await core().cancelPending(host, slotId);
+  const kept = result === "kept" ? ` ${building(slot.built)?.label || slot.built} stays.` : "";
+  await log("build-removed", `${label} was cancelled (no refund).${kept}`);
 }
 
 /** Remove a building outright, without refund (D7). */
@@ -255,6 +255,11 @@ export async function recordWork({ label, die, degree, bonusResources = 0, resou
     total = roll.total;
   }
   const amount = workYield(degree, total, bonusResources);
+  if (!resource) {
+    // Yields specific items, not a stock: the GM hands them out.
+    await log("work", `Work on ${label}: ${degreeLabel(degree)}${amount ? `, ${amount} item(s) for the GM to hand out` : ", no yield"}.`);
+    return amount;
+  }
   if (amount) await core().adjustResource(s.id, resource, amount);
   await log("work", `Work on ${label}: ${degreeLabel(degree)}, ${amount ? `+${amount} ${resourceLabel(resource)}` : "no yield"}${degree === "criticalSuccess" && amount ? " (doubled)" : ""}.`);
   return amount;

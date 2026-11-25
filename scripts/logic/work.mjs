@@ -14,7 +14,7 @@ export function workTargets({ tile, sceneId, getBuilding, getDiscoverable }) {
     if (!d.found) continue;
     const def = getDiscoverable(d.type) || {};
     if (def.workable === false) continue;
-    out.push({ kind: "discoverable", ref: { sceneId, key: tile.key, id: d.id }, label: d.name || def.label || d.type, resource: def.food ? "rations" : "materials" });
+    out.push({ kind: "discoverable", ref: { sceneId, key: tile.key, id: d.id }, label: d.name || def.label || d.type, resource: resourceOf(def) });
   }
   for (const slot of tile.slots || []) {
     if (!slot.built || slot.damaged) continue;
@@ -24,6 +24,15 @@ export function workTargets({ tile, sceneId, getBuilding, getDiscoverable }) {
     out.push({ kind: "building", slotId: slot.id, label: def.label || slot.built, die, resource: def.effects.produces || "materials", bonusResources: Number(def.effects.bonusResources) || 0 });
   }
   return out;
+}
+
+/**
+ * What Working a discoverable yields: its `produces` (core 0.2.1+): a resource id, or "" when it yields specific items
+ * rather than a stock (core's null). Older definitions without `produces` fall back to Rations for food, else Materials.
+ */
+export function resourceOf(def) {
+  if (def && "produces" in def) return def.produces ?? "";
+  return def?.food ? "rations" : "materials";
 }
 
 /** The work profile of a tile building (core's workProfile covers only resources). */

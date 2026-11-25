@@ -8,7 +8,7 @@ import { parseBuildingFile, combineBuildingFiles, validateDefinition, materialsP
 import { computeStats } from "../scripts/logic/stats.mjs";
 import { pendingBuilds, planAttempts, attemptResult, setbackResult, degreeName } from "../scripts/logic/construction.mjs";
 import { computeUpkeep, editUpkeep, upkeepText } from "../scripts/logic/upkeep.mjs";
-import { workTargets, workYield } from "../scripts/logic/work.mjs";
+import { workTargets, workYield, resourceOf } from "../scripts/logic/work.mjs";
 import { weekPageHTML, recapText, pageName } from "../scripts/logic/chronicle.mjs";
 import { createActions, moduleData } from "../scripts/logic/data.mjs";
 
@@ -34,16 +34,16 @@ test("compareVersions orders dotted versions", () => {
 });
 
 test("checkCoreApi disables only features whose calls are missing", () => {
-  const api = { version: "0.2.0" };
+  const api = { version: "0.2.1" };
   for (const n of ["getSettlement", "getSettlements", "createSettlement", "patchSettlement", "request", "getClock", "advancePhase",
     "getModuleData", "registerAction", "tileSecurity", "isSecure", "builtOn", "get", "define", "all", "canAttach", "attach",
-    "addProgress", "detach", "buildDC", "adjustResource", "setAccess", "workProfile", "activityDC", "getTile"]) api[n] = () => {};
+    "addProgress", "detach", "cancelPending", "buildDC", "adjustResource", "setAccess", "workProfile", "activityDC", "getTile"]) api[n] = () => {};
   let r = checkCoreApi(api);
   assert.deepEqual(r.disabled, []); assert.ok(r.versionOk);
   delete api.workProfile;
   r = checkCoreApi(api);
   assert.deepEqual(r.disabled, ["work"]); assert.deepEqual(r.missing, ["workProfile"]);
-  assert.equal(checkCoreApi({ ...api, version: "0.1.0" }).versionOk, false);
+  assert.equal(checkCoreApi({ ...api, version: "0.2.0" }).versionOk, false, "0.2.1 is the minimum");
   assert.equal(checkCoreApi(null).ok, false);
 });
 
@@ -225,6 +225,28 @@ test("work targets and yields (critical success doubles)", () => {
   assert.equal(workYield("success", 3, 1), 4);
   assert.equal(workYield("criticalSuccess", 3, 1), 8);
   assert.equal(workYield("failure", 3, 1), 0);
+});
+
+test("Work yields the discoverable's produces; items-only resources yield no stock", () => {
+  const r = reg();
+  assert.equal(resourceOf(r.get("discoverables", "herb-cluster")), "supplies");
+  assert.equal(resourceOf(r.get("discoverables", "grain-grass-stand")), "rations");
+  assert.equal(resourceOf(r.get("discoverables", "crystal-bloom-formation")), "", "produces null: specific items");
+  assert.equal(resourceOf({ food: true }), "rations", "older definitions fall back");
+  assert.equal(resourceOf({}), "materials");
+});
+
+test("cancelling an upgrade keeps the earlier level (core's cancelPending)", () => {
+  const { r, s } = world();
+  const t = Core.getTile(s, "sc", "3,4");
+  t.discoverables.push({ ...Core.blankDiscoverable(), id: "d1", type: "grain-grass-stand", tier: 4, found: true });
+  const host = { kind: "discoverable", sceneId: "sc", key: "3,4", id: "d1" };
+  Core.attach(s, r, host, "yield-1", { complete: true });
+  const slotId = Core.attach(s, r, host, "yield-2", { complete: true }) && t.discoverables[0].slots[0].id;
+  Core.attach(s, r, host, "yield-3");
+  assert.equal(Core.cancelPending(s, host, slotId), "kept");
+  assert.equal(t.discoverables[0].slots[0].built, "yield-2");
+  assert.equal(t.discoverables[0].slots[0].pending, null);
 });
 
 /* ---------------------------------------------------------------- chronicle */
