@@ -1,0 +1,48 @@
+/* Settlement Manager */
+.settlement-manager .window-content { padding: 0.5rem 0.75rem; display: flex; flex-direction: column; gap: 0.4rem; overflow-y: auto; }
+.settlement-manager h2 { margin: 0; border: none; }
+.settlement-manager h3 { margin: 0.6rem 0 0.25rem; font-size: 1rem; border-bottom: 1px solid var(--color-border-light-tertiary, #8884); }
+.settlement-manager .sm-head { display: flex; align-items: center; gap: 0.5rem; }
+.settlement-manager .sm-head h2 { flex: 1; }
+.settlement-manager .sm-phase { display: flex; align-items: center; gap: 0.5rem; padding: 0.25rem 0.5rem; border-radius: 4px; background: rgba(0, 0, 0, 0.08); }
+.settlement-manager .sm-phase span { flex: 1; }
+.settlement-manager .sm-phase button { flex: 0 0 auto; width: auto; }
+.settlement-manager .sm-tabs { display: flex; gap: 0.25rem; border-bottom: 1px solid #8886; }
+.settlement-manager .sm-tabs a { padding: 0.25rem 0.6rem; border-radius: 4px 4px 0 0; }
+.settlement-manager .sm-tabs a.active { background: rgba(0, 0, 0, 0.12); font-weight: bold; }
+.settlement-manager .sm-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(95px, 1fr)); gap: 0.4rem; }
+.settlement-manager .sm-stats > div { display: flex; flex-direction: column; align-items: center; padding: 0.35rem; border: 1px solid #8884; border-radius: 4px; }
+.settlement-manager .sm-stats span { font-size: 0.8rem; opacity: 0.8; }
+.settlement-manager .sm-stats strong { font-size: 1.3rem; }
+.settlement-manager .sm-stats input { width: 4.5rem; text-align: center; }
+.settlement-manager .sm-stats small input { width: 3.5rem; }
+.settlement-manager .sm-sub { font-size: 0.85em; opacity: 0.75; margin: 0.1rem 0; }
+.settlement-manager .sm-warn, .settlement-manager .sm-warnings li, .sm-card .sm-warn { color: #a33; }
+.settlement-manager .sm-good, .sm-card .sm-good { color: #2a6; }
+.settlement-manager .sm-bad { color: #a33; }
+.settlement-manager .sm-tag { font-size: 0.8em; padding: 0 0.3rem; border-radius: 3px; background: rgba(0, 0, 0, 0.1); }
+.settlement-manager ul.sm-slots, .settlement-manager ul.sm-build-list, .settlement-manager ul.sm-warnings { list-style: none; margin: 0; padding: 0; }
+.settlement-manager .sm-slots li, .settlement-manager .sm-build-list li { display: flex; align-items: center; gap: 0.5rem; padding: 0.25rem 0; border-bottom: 1px dotted #8884; }
+.settlement-manager .sm-slots li > div, .settlement-manager .sm-build-list li > div { flex: 1; }
+.settlement-manager .sm-build-list li button { flex: 0 0 auto; width: auto; }
+.settlement-manager .sm-build-list li.sm-disabled { opacity: 0.55; }
+.settlement-manager .sm-reason { font-size: 0.85em; font-style: italic; }
+.settlement-manager .sm-actions { display: flex; gap: 0.35rem; }
+.settlement-manager .sm-access-list { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+.settlement-manager .sm-access { display: flex; align-items: center; gap: 0.25rem; }
+.settlement-manager .sm-table { width: 100%; }
+.settlement-manager .sm-table .sm-num { text-align: right; font-weight: bold; }
+.settlement-manager .sm-table input.sm-delta { width: 4rem; }
+.settlement-manager .sm-table td button { width: auto; }
+.settlement-manager .sm-foot { display: flex; align-items: center; gap: 0.5rem; margin-top: auto; padding-top: 0.4rem; border-top: 1px solid #8884; }
+.settlement-manager .sm-foot span { flex: 1; }
+.settlement-manager .sm-foot button { width: auto; }
+.settlement-manager .sm-host { margin-bottom: 0.4rem; }
+.settlement-manager .sm-empty { text-align: center; padding: 1rem; }
+.sm-card h3 { margin: 0 0 0.2rem; }
+.sm-card .sm-sub { font-size: 0.85em; opacity: 0.75; }
+.sm-card .sm-buttons { display: flex; flex-wrap: wrap; gap: 0.25rem; margin-top: 0.3rem; }
+.sm-card .sm-buttons button { flex: 1 1 auto; }
+.sm-card .sm-gm-only { display: flex; gap: 0.25rem; margin-top: 0.3rem; }
+.sm-row { display: flex; align-items: center; gap: 0.5rem; margin: 0.25rem 0; }
+.sm-row > input, .sm-row > select { flex: 1; }
