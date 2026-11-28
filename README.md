@@ -1,4 +1,4 @@
-# Settlement Manager — v0.1.2
+# Settlement Manager — v0.1.3
 
 The **Settlement** module for the group's weekly settlement game on Foundry VTT 14 with Pathfinder 2e. It builds on
 **settlement-core**, which owns all the data (tiles, the settlement, resources, building slots and the week clock).
@@ -12,8 +12,8 @@ map with PF2e skill checks, the shared resource pool, upkeep, recording Work, an
 Design: `M:\RoboFoundry\PF2e\Empire Management\shared\proposals\settlement-manager.md`.
 
 ## Install
-- Manifest URL: `https://github.com/FridgeboyAI/settlement-manager-module/releases/latest/download/module.json`
-- It requires **settlement-core** (0.2.1 or later); Foundry offers to install it. Turn on settlement-core's
+- Manifest URL (permanent; updates come through it): `https://raw.githubusercontent.com/FridgeboyAI/settlement-manager-module/main/module.json`
+- It requires **settlement-core** (0.3.2 or later); Foundry offers to install it. Turn on settlement-core's
   *Load the Liftland content set* for the default buildings.
 - For testing a build branch, deploy it with `M:\RoboFoundry\tools\deploy-modules.ps1 -Module settlement-manager`.
 
@@ -81,7 +81,7 @@ the Settlements window (it also runs when the GM logs in). Use settlement-core's
 `.openHex(sceneId, "row,col")` opens a hex; `.reloadBuildings()` reloads the GM's files.
 
 ## Manual test checklist
-Test world: Foundry 14, PF2e, settlement-core 0.2.1 with Liftland on, settlement-hex-manager present but not needed,
+Test world: Foundry 14, PF2e, settlement-core 0.3.2 with Liftland on, settlement-hex-manager present but not needed,
 one GM and one player client (the player owns a character). Save at least two revealed hexes in settlement-core first
 (one with a found resource, e.g. via `game.modules.get("settlement-core").api`).
 
@@ -109,8 +109,8 @@ one GM and one player client (the player owns a character). Save at least two re
    construction and Work; the player can open it from the History tab.
 8. **No GM.** Log the GM out: the player can read every tab; buttons are disabled with "A GM needs to be online".
 9. **Access.** A building that needs Lumber is greyed out with "Needs access to Lumber" until the GM ticks Lumber.
-10. **Install and update (after the first release).** Install from the `releases/latest` manifest URL; after a newer
-    tag is released, Foundry's *Check for updates* finds it.
+10. **Install and update (after the first release).** Install from the permanent `main/module.json` manifest URL;
+    after a newer version is released, Foundry's *Check for updates* finds it.
 
 ## Known limits
 - One settlement (the group hasn't settled multiple settlements; the id lives in a setting so this can change).

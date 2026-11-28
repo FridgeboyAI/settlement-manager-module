@@ -34,7 +34,7 @@ test("compareVersions orders dotted versions", () => {
 });
 
 test("checkCoreApi disables only features whose calls are missing", () => {
-  const api = { version: "0.2.1" };
+  const api = { version: "0.3.2" };
   for (const n of ["getSettlement", "getSettlements", "createSettlement", "patchSettlement", "request", "getClock", "advancePhase",
     "getModuleData", "registerAction", "tileSecurity", "isSecure", "builtOn", "get", "define", "all", "canAttach", "attach",
     "addProgress", "detach", "cancelPending", "buildDC", "adjustResource", "setAccess", "workProfile", "activityDC", "getTile", "tileDCs"]) api[n] = () => {};
@@ -43,7 +43,7 @@ test("checkCoreApi disables only features whose calls are missing", () => {
   delete api.workProfile;
   r = checkCoreApi(api);
   assert.deepEqual(r.disabled, ["work"]); assert.deepEqual(r.missing, ["workProfile"]);
-  assert.equal(checkCoreApi({ ...api, version: "0.2.0" }).versionOk, false, "0.2.1 is the minimum");
+  assert.equal(checkCoreApi({ ...api, version: "0.3.1" }).versionOk, false, "0.3.2 is the minimum");
   assert.equal(checkCoreApi(null).ok, false);
 });
 

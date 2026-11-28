@@ -62,7 +62,7 @@ function warnFields(kind, record, fields) {
 export function reportCheck() {
   if (!game.user.isGM) return;
   if (!check.ok) { ui.notifications.error("Settlement Manager needs the settlement-core module to be active.", { permanent: true }); return; }
-  if (!check.versionOk) ui.notifications.warn(`Settlement Manager expects settlement-core 0.2.1 or later (found ${check.version || "unknown"}).`, { permanent: true });
+  if (!check.versionOk) ui.notifications.warn(`Settlement Manager expects settlement-core 0.3.2 or later (found ${check.version || "unknown"}).`, { permanent: true });
   if (check.missing.length) {
     ui.notifications.warn(`Settlement Manager: settlement-core has no ${check.missing.join(", ")}. Turned off: ${check.disabled.join(", ")}.`, { permanent: true });
   }
