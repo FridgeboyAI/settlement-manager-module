@@ -1,0 +1,3 @@
+tests/.core/
+node_modules/
+*.log
