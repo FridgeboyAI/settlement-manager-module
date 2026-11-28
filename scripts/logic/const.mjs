@@ -1,7 +1,7 @@
 /** Shared constants. No Foundry dependency. */
 export const ID = "settlement-manager";
 export const CORE_ID = "settlement-core";
-export const CORE_MIN_VERSION = "0.2.1";
+export const CORE_MIN_VERSION = "0.3.2";
 
 /** PF2e degrees of success, indexed by the system's numeric degree (0 = critical failure ... 3 = critical success). */
 export const DEGREES = ["criticalFailure", "failure", "success", "criticalSuccess"];

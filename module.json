@@ -2,7 +2,7 @@
   "id": "settlement-manager",
   "title": "Settlement Manager",
   "description": "The Settlement module for Settlement Core: found the settlement, build on it and on the map with weekly PF2e checks, track the shared resource pool and upkeep, and keep a weekly Chronicle.",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "authors": [
     {
       "name": "FridgeboyAI"
@@ -23,9 +23,9 @@
       {
         "id": "settlement-core",
         "type": "module",
-        "manifest": "https://github.com/FVTT-Mods-Hawthorne/settlement-core-module/releases/download/v0.2.1/module.json",
+        "manifest": "https://raw.githubusercontent.com/FVTT-Mods-Hawthorne/settlement-core-module/main/module.json",
         "compatibility": {
-          "minimum": "0.2.1"
+          "minimum": "0.3.2"
         }
       }
     ]

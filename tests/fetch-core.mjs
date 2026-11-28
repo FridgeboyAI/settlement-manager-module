@@ -6,7 +6,7 @@ import { fileURLToPath } from "node:url";
 import path from "node:path";
 
 const REPO = "FVTT-Mods-Hawthorne/settlement-core-module";
-const COMMIT = "ef89ae248c2ea5de091ced947ee9244707791d82"; // settlement-core v0.2.1
+const COMMIT = "74f04ef6c60c0387c5dab4e6c3be23426e09e377"; // settlement-core v0.3.2
 const FILES = ["scripts/core.mjs", "scripts/content-liftland.mjs", "scripts/module.mjs"];
 const dir = path.join(path.dirname(fileURLToPath(import.meta.url)), ".core");
 const stamp = path.join(dir, `${COMMIT}.pin`);
